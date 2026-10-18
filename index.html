@@ -1,0 +1,1017 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC डिजिटल सेवा पोर्टल - लाइव सिंगल टेस्ट प्रोटोटाइप</title>
+    <!-- FontAwesome & Google Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#002e6e',
+                            cyan: '#00baf2',
+                            darkNavy: '#001b44',
+                            lightBg: '#f4f6f9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar & interactive states */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-brand-lightBg text-gray-800 font-sans flex flex-col min-h-screen">
+
+    <!-- Toast Notification Banner -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300 ease-in-out bg-gray-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-gray-700">
+        <i id="toastIcon" class="fa-solid fa-circle-info text-brand-cyan"></i>
+        <span id="toastMsg">सूचना संदेश</span>
+    </div>
+
+    <!-- Header Navigation -->
+    <header class="bg-brand-navy text-white sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-cyan to-blue-500 flex items-center justify-center text-white shadow-md">
+                    <i class="fa-solid fa-laptop-code text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-none tracking-tight">CSC डिजिटल सेवा</h1>
+                    <span class="text-[10px] text-brand-cyan font-semibold tracking-wider uppercase">पोर्टल प्रोटोटाइप v2.0</span>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center gap-1 font-medium text-sm">
+                <button onclick="navigateTo('home')" id="nav-home" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">होम</button>
+                <button onclick="navigateTo('services')" id="nav-services" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">सेवाएं</button>
+                <button onclick="navigateTo('order')" id="nav-order" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">ऑर्डर करें</button>
+                <button onclick="navigateTo('tracker')" id="nav-tracker" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">ट्रैक स्टेटस</button>
+                <button onclick="navigateTo('about')" id="nav-about" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">हमारे बारे में</button>
+                <button onclick="navigateTo('contact')" id="nav-contact" class="nav-btn px-3 py-2 rounded-lg text-gray-200 hover:text-white hover:bg-white/10 transition">संपर्क</button>
+                
+                <div class="h-5 w-px bg-white/20 mx-2"></div>
+
+                <button onclick="navigateTo('portal')" id="nav-portal" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-4 py-2 rounded-lg transition shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span id="navAuthLabel">लॉगिन पोर्टल</span>
+                </button>
+            </nav>
+
+            <!-- Mobile Hamburger Button -->
+            <button onclick="toggleMobileMenu()" class="md:hidden text-gray-200 hover:text-white text-xl p-2 focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-brand-darkNavy border-t border-white/10 px-4 pt-2 pb-4 space-y-1">
+            <button onclick="navigateTo('home'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">होम</button>
+            <button onclick="navigateTo('services'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">सेवाएं</button>
+            <button onclick="navigateTo('order'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">ऑर्डर करें</button>
+            <button onclick="navigateTo('tracker'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">ट्रैक स्टेटस</button>
+            <button onclick="navigateTo('about'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">हमारे बारे में</button>
+            <button onclick="navigateTo('contact'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-gray-200 hover:bg-white/10">संपर्क</button>
+            <button onclick="navigateTo('portal'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md bg-emerald-600 text-white font-semibold mt-2">लॉगिन पोर्टल</button>
+        </div>
+    </header>
+
+    <!-- Main Content Dynamic Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- ================= PAGE 1: HOME ================= -->
+        <section id="page-home" class="page-view space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl overflow-hidden bg-brand-navy text-white shadow-xl p-8 sm:p-12 border border-blue-900/50">
+                <div class="absolute inset-0 bg-gradient-to-r from-brand-darkNavy via-brand-navy to-transparent opacity-90 z-10"></div>
+                <div class="absolute -right-10 -bottom-10 w-80 h-80 bg-brand-cyan/20 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-20 max-w-2xl space-y-4">
+                    <span class="bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">ऑनलाइन डिजिटल केंद्र</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                        सभी सरकारी व डिजिटल सेवाएं <span class="text-brand-cyan">एक ही जगह</span> उपलब्ध
+                    </h2>
+                    <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                        पैन कार्ड, आधार PVC प्रिंट, आय/जाति/निवास प्रमाण पत्र, आयुष्मान कार्ड जैसी सभी प्रमुख सेवाओं का लाभ तुरंत उठायें।
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-3">
+                        <button onclick="navigateTo('services')" class="bg-brand-cyan hover:bg-sky-400 text-brand-darkNavy font-bold px-6 py-3 rounded-xl transition shadow-lg flex items-center gap-2">
+                            <span>सेवाएं देखें</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                        <button onclick="navigateTo('tracker')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            <span>ऑर्डर ट्रैक करें</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Cards / Banner Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-blue-50 text-brand-navy flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-bolt"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium">त्वरित प्रक्रिया</div>
+                        <div class="font-bold text-gray-900 text-sm sm:text-base">100% फास्ट सर्विस</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium">सुरक्षित भुगतान</div>
+                        <div class="font-bold text-gray-900 text-sm sm:text-base">गूगल शीट व डायरेक्ट</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium">सहायता केंद्र</div>
+                        <div class="font-bold text-gray-900 text-sm sm:text-base">WhatsApp सपोर्ट</div>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200/80 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-gray-500 font-medium">रिटेलर नेटवर्क</div>
+                        <div class="font-bold text-gray-900 text-sm sm:text-base">ऑल-इन-वन पोर्टल</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Services Grid Header -->
+            <div class="flex items-center justify-between border-b border-gray-200 pb-3">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">लोकप्रिय सेवाएं (Popular Services)</h3>
+                    <p class="text-xs text-gray-500">सीधे आवेदन करने हेतु किसी भी सेवा का चयन करें</p>
+                </div>
+                <button onclick="navigateTo('services')" class="text-brand-navy hover:text-brand-cyan text-sm font-semibold flex items-center gap-1">
+                    <span>सभी देखें</span>
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Home Services Grid Container -->
+            <div id="homeFeaturedGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: SERVICES CATALOG ================= -->
+        <section id="page-services" class="page-view space-y-6 hidden">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-brand-navy">सेवा कैटलॉग (Services Catalog)</h2>
+                        <p class="text-xs text-gray-500">अपनी पसंदीदा सेवा खोजें और एक क्लिक में ऑर्डर करें</p>
+                    </div>
+                    <!-- Live Search Input -->
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <input type="text" id="serviceSearchInput" onkeyup="filterServices()" placeholder="सेवा खोजें (उदा: पैन, आधार, राशन)..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan focus:bg-white transition">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Catalog Grid -->
+            <div id="fullServicesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: ORDER FORM ================= -->
+        <section id="page-order" class="page-view hidden">
+            <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                <div class="bg-brand-navy text-white p-6 relative">
+                    <div class="relative z-10">
+                        <h2 class="text-xl font-bold flex items-center gap-2">
+                            <i class="fa-solid fa-file-signature text-brand-cyan"></i>
+                            <span>ऑनलाइन सेवा ऑर्डर करें</span>
+                        </h2>
+                        <p class="text-xs text-blue-200 mt-1">विवरण भरें और तुरंत ऑर्डर दर्ज करें</p>
+                    </div>
+                </div>
+
+                <form id="orderSubmitForm" onsubmit="handleOrderSubmission(event)" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">चयनित सेवा (Service Name)</label>
+                        <input type="text" id="orderServiceSelect" required class="w-full px-3.5 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm font-semibold text-brand-navy focus:outline-none" readonly>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">सेवा शुल्क (Service Fee)</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-gray-500 text-sm">₹</span>
+                            <input type="text" id="orderFeeDisplay" readonly class="w-full pl-8 pr-3.5 py-2.5 bg-gray-100 border border-gray-300 rounded-xl text-sm font-bold text-emerald-600 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">ग्राहक का नाम (Full Name) *</label>
+                            <input type="text" id="custName" required placeholder="पूरा नाम दर्ज करें" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 uppercase mb-1">व्हाट्सएप / मोबाइल *</label>
+                            <input type="tel" id="custPhone" pattern="[0-9]{10}" required placeholder="10-अंकीय मोबाइल नंबर" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">आवश्यक निर्देश / नोट (Additional Notes)</label>
+                        <textarea id="custDetails" rows="3" placeholder="जैसे: आधार नंबर, पैन नंबर या अन्य आवश्यक जानकारी..." class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan"></textarea>
+                    </div>
+
+                    <!-- Payment Mode Mock Radio Selection -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-2">भुगतान का माध्यम (Payment Mode)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="border rounded-xl p-3 flex items-center gap-3 cursor-pointer bg-blue-50/50 border-brand-cyan">
+                                <input type="radio" name="payMode" value="Direct Mock" checked class="text-brand-navy focus:ring-brand-cyan">
+                                <div>
+                                    <div class="text-xs font-bold text-gray-900">डायरेक्ट सबमिट</div>
+                                    <div class="text-[10px] text-gray-500">व्हाट्सएप / शीट ट्रिगर</div>
+                                </div>
+                            </label>
+                            <label class="border rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:bg-gray-50 border-gray-200">
+                                <input type="radio" name="payMode" value="Wallet Pay" class="text-brand-navy focus:ring-brand-cyan">
+                                <div>
+                                    <div class="text-xs font-bold text-gray-900">रिटेलर वॉलेट</div>
+                                    <div class="text-[10px] text-gray-500">इंस्टेंट डिडक्शन</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2 text-base">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ऑर्डर तुरंत सबमिट करें</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Receipt Modal Output (Appears post-submission) -->
+            <div id="receiptCard" class="max-w-xl mx-auto mt-6 bg-white rounded-2xl p-6 shadow-xl border border-emerald-200 hidden space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div class="flex items-center gap-2 text-emerald-600 font-bold">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                        <span>ऑर्डर सफलतापूर्वक सबमिट हुआ!</span>
+                    </div>
+                    <span id="receiptId" class="text-xs font-mono bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md border">ID: ORD00000</span>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-xs">
+                    <div class="flex justify-between"><span class="text-gray-500">ग्राहक का नाम:</span><span id="receiptName" class="font-semibold text-gray-900">--</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">मोबाइल नंबर:</span><span id="receiptPhone" class="font-semibold text-gray-900">--</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">सेवा:</span><span id="receiptService" class="font-semibold text-brand-navy">--</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">शुल्क:</span><span id="receiptFee" class="font-bold text-emerald-600">--</span></div>
+                    <div class="flex justify-between"><span class="text-gray-500">स्टेटस:</span><span class="font-bold text-amber-600">Pending</span></div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button onclick="triggerWhatsAppRedirect()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>WhatsApp पर भेजें</span>
+                    </button>
+                    <button onclick="navigateTo('tracker')" class="flex-1 bg-brand-navy hover:bg-brand-darkNavy text-white font-semibold py-2.5 rounded-xl transition text-xs flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>लाइव ट्रैकर देखें</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: LIVE ORDER TRACKER ================= -->
+        <section id="page-tracker" class="page-view space-y-6 hidden">
+            <div class="max-w-2xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+                <div class="text-center space-y-1">
+                    <h2 class="text-2xl font-bold text-brand-navy">लाइव ऑर्डर ट्रैकर (Live Order Status)</h2>
+                    <p class="text-xs text-gray-500">अपना 10-अंकीय मोबाइल नंबर या ऑर्डर आईडी दर्ज करें</p>
+                </div>
+
+                <div class="flex gap-2">
+                    <input type="text" id="trackerInput" placeholder="जैसे: 7355719608 या ORD1001" class="flex-grow px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                    <button onclick="searchOrderStatus()" class="bg-brand-navy hover:bg-brand-darkNavy text-white font-semibold px-6 py-3 rounded-xl transition shadow text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>खोजें</span>
+                    </button>
+                </div>
+
+                <!-- Tracker Results Output Table -->
+                <div id="trackerResults" class="space-y-4 hidden">
+                    <h3 class="font-bold text-sm text-gray-700 border-b pb-2">मिली जानकारी (Order Details):</h3>
+                    <div id="trackerList" class="space-y-3">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: ABOUT ================= -->
+        <section id="page-about" class="page-view hidden">
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-4">
+                <h2 class="text-2xl font-bold text-brand-navy border-b pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-brand-cyan"></i>
+                    <span>हमारे बारे में (About CSC Portal)</span>
+                </h2>
+                <p class="text-sm leading-relaxed text-gray-600">
+                    हमारा डिजिटल सेवा केंद्र ग्राहकों को तीव्र, पारदर्शी और सटीक ऑनलाइन सरकारी व डिजिटल सुविधाएं उपलब्ध कराने हेतु संकल्पबद्ध है। हम ग्राम पंचायत व शहरी क्षेत्र के रिटेलर्स को सशक्त बनाने हेतु एकीकृत डैशबोर्ड भी प्रदान करते हैं।
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-sm text-gray-900 mb-1"><i class="fa-solid fa-bullseye text-brand-cyan mr-2"></i>हमारा उद्देश्य</h4>
+                        <p class="text-xs text-gray-500">सभी डिजिटल डॉक्यूमेंटेशन व प्रिंट सर्विस को एक ही क्लिक में उपलब्ध कराना।</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <h4 class="font-bold text-sm text-gray-900 mb-1"><i class="fa-solid fa-shield-halved text-emerald-500 mr-2"></i>सुरक्षा व गोपनीयता</h4>
+                        <p class="text-xs text-gray-500">उपयोगकर्ता के डेटा एवं आवेदनों का पूर्णतः सुरक्षित प्रबंधन।</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: CONTACT ================= -->
+        <section id="page-contact" class="page-view hidden">
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-200 space-y-6">
+                <h2 class="text-2xl font-bold text-brand-navy border-b pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-headset text-brand-cyan"></i>
+                    <span>हमसे संपर्क करें (Contact Support)</span>
+                </h2>
+
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-start gap-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100">
+                        <div class="w-10 h-10 rounded-lg bg-brand-navy text-white flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">कार्यालय का पता:</div>
+                            <div class="text-xs text-gray-600">मुख्य बाजार, बस स्टैंड चौराहा, चित्रकूट धाम, उत्तर प्रदेश - 210205</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-900">व्हाट्सएप एवं मोबाइल सपोर्ट:</div>
+                            <div class="text-xs text-gray-600 font-mono">+91 7355719608 (सुबह 9:00 बजे से शाम 7:00 बजे तक)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 7: PORTAL (AUTH & PAYTM-PG STYLE DASHBOARD) ================= -->
+        <section id="page-portal" class="page-view space-y-6 hidden">
+            
+            <!-- Auth Form Card (Shown when logged out) -->
+            <div id="portalAuthContainer" class="max-w-md mx-auto bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-gray-200">
+                <div class="text-center space-y-2 mb-6">
+                    <div class="w-12 h-12 bg-brand-navy text-brand-cyan rounded-2xl mx-auto flex items-center justify-center text-xl font-bold shadow-md">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h2 id="authFormTitle" class="text-xl font-bold text-brand-navy">CSC पोर्टल लॉगिन</h2>
+                    <p class="text-xs text-gray-500">एडमिन अथवा रिटेलर के रूप में साइन इन करें</p>
+                </div>
+
+                <!-- Role Selector Tabs -->
+                <div class="flex bg-gray-100 p-1 rounded-xl mb-5 text-xs font-bold">
+                    <button id="roleBtnRetailer" type="button" onclick="setAuthRole('retailer')" class="flex-1 py-2.5 rounded-lg text-white bg-brand-navy shadow transition">Retailer Mode</button>
+                    <button id="roleBtnAdmin" type="button" onclick="setAuthRole('admin')" class="flex-1 py-2.5 rounded-lg text-gray-600 hover:text-gray-900 transition">Admin Mode</button>
+                </div>
+
+                <form onsubmit="handlePortalAuth(event)" class="space-y-4">
+                    <div id="registerNameGroup" class="hidden">
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">पूरा नाम (Full Name)</label>
+                        <input type="text" id="authName" placeholder="अपना नाम दर्ज करें" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                    </div>
+
+                    <div>
+                        <label id="authPhoneLabel" class="block text-xs font-bold text-gray-700 uppercase mb-1">मोबाइल नंबर / यूजर ID</label>
+                        <input type="text" id="authPhone" required placeholder="10-अंकीय मोबाइल नंबर" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">पासवर्ड</label>
+                        <input type="password" id="authPassword" required placeholder="पासवर्ड दर्ज करें" class="w-full px-3.5 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-cyan">
+                    </div>
+
+                    <button type="submit" id="authSubmitBtn" class="w-full bg-brand-navy hover:bg-brand-darkNavy text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">
+                        लॉगिन करें
+                    </button>
+                </form>
+
+                <!-- Credentials Info Box -->
+                <div class="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 space-y-1">
+                    <div class="font-bold flex items-center gap-1"><i class="fa-solid fa-key"></i> टेस्ट क्रेडेंशियल्स (Demo Credentials):</div>
+                    <div><b>Admin:</b> ID: <code class="bg-amber-100 px-1 rounded">admin</code> | Pass: <code class="bg-amber-100 px-1 rounded">admin123</code></div>
+                    <div><b>Retailer:</b> ID: <code class="bg-amber-100 px-1 rounded">7355719608</code> | Pass: <code class="bg-amber-100 px-1 rounded">123456</code></div>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button type="button" onclick="toggleAuthRegisterMode()" id="authToggleText" class="text-xs text-brand-cyan hover:underline font-semibold">
+                        नया रिटेलर खाता बनाएं?
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paytm PG Style Main Dashboard (Shown when logged in) -->
+            <div id="portalDashboard" class="hidden space-y-6">
+                
+                <!-- Top User Bar -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-brand-navy to-brand-cyan text-white flex items-center justify-center font-bold text-xl shadow">
+                            <i id="dashUserAvatarIcon" class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 id="dashUserName" class="text-lg font-bold text-gray-900">उपयोगकर्ता नाम</h2>
+                                <span id="dashUserBadge" class="bg-blue-100 text-brand-navy text-[10px] font-bold px-2 py-0.5 rounded-md uppercase">RETAILER</span>
+                            </div>
+                            <p id="dashUserSubtext" class="text-xs text-gray-500 font-mono">ID: 0000000000</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <!-- Wallet Pill -->
+                        <div class="bg-emerald-50 border border-emerald-200 px-4 py-2 rounded-xl flex items-center gap-2">
+                            <i class="fa-solid fa-wallet text-emerald-600 text-base"></i>
+                            <div>
+                                <div class="text-[10px] text-gray-500 font-bold uppercase">वॉलेट बैलेंस</div>
+                                <div id="dashWalletBalance" class="text-sm font-extrabold text-emerald-700">₹0</div>
+                            </div>
+                            <button onclick="mockTopUpWallet()" class="ml-2 text-[10px] bg-emerald-600 text-white px-2 py-1 rounded font-bold hover:bg-emerald-500">+ टॉपअप</button>
+                        </div>
+
+                        <button onclick="logoutPortal()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span>लॉग आउट</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Earnings & Metrics Cards (Paytm PG Style) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-brand-cyan">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">कुल ऑर्डर्स (Total Orders)</div>
+                        <div id="statTotalOrders" class="text-2xl font-black text-brand-navy mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-amber-500">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">पेंडिंग (Pending)</div>
+                        <div id="statPendingOrders" class="text-2xl font-black text-amber-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-emerald-500">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">पूर्ण (Completed)</div>
+                        <div id="statCompletedOrders" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 border-l-4 border-l-purple-500">
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider">कुल कलेक्शन (Revenue)</div>
+                        <div id="statRevenue" class="text-2xl font-black text-purple-700 mt-1">₹0</div>
+                    </div>
+                </div>
+
+                <!-- Real Interactive Orders Table Store -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden space-y-4 p-5">
+                    <div class="flex items-center justify-between border-b pb-3">
+                        <h3 class="font-bold text-base text-gray-900 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-brand-navy"></i>
+                            <span>लाइव ऑर्डर लिस्ट एवं प्रबंधन (Orders Store)</span>
+                        </h3>
+                        <button onclick="refreshDashboardData()" class="text-xs text-brand-navy hover:text-brand-cyan font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-rotate text-xs"></i>
+                            <span>रिफ्रेश डेटा</span>
+                        </button>
+                    </div>
+
+                    <!-- Orders Table Container -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 uppercase tracking-wider border-b font-bold">
+                                    <th class="p-3">ऑर्डर ID</th>
+                                    <th class="p-3">ग्राहक विवरण</th>
+                                    <th class="p-3">सेवा</th>
+                                    <th class="p-3">शुल्क</th>
+                                    <th class="p-3">स्टेटस</th>
+                                    <th class="p-3 text-right">एक्शन / अपडेट</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashOrdersTableBody" class="divide-y divide-gray-200 font-medium">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Exclusive Panel: Retailers List -->
+                <div id="adminRetailersSection" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 space-y-4 hidden">
+                    <h3 class="font-bold text-base text-gray-900 flex items-center gap-2 border-b pb-3">
+                        <i class="fa-solid fa-users-gear text-purple-600"></i>
+                        <span>रजिस्टर्ड रिटेलर्स डायरेक्टरी (Retailer Directory)</span>
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead>
+                                <tr class="bg-gray-100 text-gray-700 uppercase font-bold border-b">
+                                    <th class="p-3">नाम</th>
+                                    <th class="p-3">मोबाइल</th>
+                                    <th class="p-3">रोल</th>
+                                    <th class="p-3">वॉलेट बैलेंस</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashRetailersTableBody" class="divide-y divide-gray-200">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 text-xs py-6 border-t border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="font-medium text-gray-300">&copy; 2026 CSC डिजिटल सेवा पोर्टल. सर्वाधिकार सुरक्षित। (Single-File Prototype Test App)</p>
+            <p class="text-[11px] text-gray-500">लोकल स्टोरेज समर्थित - बिना किसी बाहरी सर्वर के तुरंत टेस्ट करने हेतु तैयार।</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        /* ================= 1. MASTER DATA STORES ================= */
+        const SERVICES_CATALOG = [
+            { id: 'srv1', name: "पैन कार्ड नया/सुधार", fee: 100, icon: "fa-address-card", desc: "नया पैन कार्ड बनवाएं या पुराने में सुधार/करेक्शन कराएं।" },
+            { id: 'srv2', name: "आधार कार्ड प्रिंट/PVC", fee: 50, icon: "fa-id-card", desc: "हाई-क्वालिटी पीवीसी प्लास्टिक आधार कार्ड प्रिंट कराएं।" },
+            { id: 'srv3', name: "आयुष्मान भारत कार्ड", fee: 50, icon: "fa-file-lines", desc: "5 लाख तक मुफ्त इलाज वाला आयुष्मान कार्ड डाउनलोड।" },
+            { name: "वोटर आईडी कार्ड प्रिंट", fee: 50, icon: "fa-address-book", desc: "डिजिटल मतदाता पहचान पत्र प्रिंट सेवा।" },
+            { id: 'srv5', name: "आय प्रमाण पत्र", fee: 120, icon: "fa-file-invoice", desc: "तहसील स्तर से अधिकृत नया आय प्रमाण पत्र।" },
+            { id: 'srv6', name: "जाति प्रमाण पत्र", fee: 120, icon: "fa-file-shield", desc: "डिजिटल हस्ताक्षरित जाति प्रमाण पत्र आवेदन।" },
+            { id: 'srv7', name: "निवास प्रमाण पत्र", fee: 120, icon: "fa-house-chimney", desc: "मूल निवास प्रमाण पत्र ऑनलाइन जारी प्रक्रिया।" },
+            { id: 'srv8', name: "राशन कार्ड सूची / नया नाम", fee: 40, icon: "fa-book-open", desc: "राशन सूची में नाम जांचें व नया नाम जुड़वायें।" },
+            { id: 'srv9', name: "बिजली बिल भुगतान", fee: 20, icon: "fa-bolt", desc: "ऑनलाइन बिजली बिल जमा एवं रसीद प्राप्त करें।" }
+        ];
+
+        // Seed default local storage database if not existing
+        function initMockDatabase() {
+            if (!localStorage.getItem('csc_orders')) {
+                const sampleOrders = [
+                    { id: 'ORD1001', service: 'पैन कार्ड नया/सुधार', name: 'राहुल कुमार', phone: '7355719608', details: 'नया पैन कार्ड आवेदन', fee: 100, status: 'Pending', date: new Date().toLocaleDateString('hi-IN') },
+                    { id: 'ORD1002', service: 'आधार कार्ड प्रिंट/PVC', name: 'अमित सिंह', phone: '9876543210', details: 'PVC आधार प्रिंट', fee: 50, status: 'Completed', date: new Date().toLocaleDateString('hi-IN') }
+                ];
+                localStorage.setItem('csc_orders', JSON.stringify(sampleOrders));
+            }
+
+            if (!localStorage.getItem('csc_users')) {
+                const sampleUsers = [
+                    { name: 'सुपर एडमिन', phone: 'admin', password: 'admin123', role: 'admin', wallet: 5000 },
+                    { name: 'रामशरण रिटेलर', phone: '7355719608', password: '123456', role: 'retailer', wallet: 450 }
+                ];
+                localStorage.setItem('csc_users', JSON.stringify(sampleUsers));
+            }
+        }
+
+        /* ================= 2. NAVIGATION & ROUTING ================= */
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+            
+            // Show selected page
+            const target = document.getElementById('page-' + pageId);
+            if (target) target.classList.remove('hidden');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Refresh UI components if required
+            if (pageId === 'portal') {
+                checkAuthSession();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.innerText = msg;
+            toastIcon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-400" : "fa-solid fa-circle-exclamation text-rose-400";
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        /* ================= 3. SERVICES RENDER & SEARCH ================= */
+        function renderServices() {
+            const homeGrid = document.getElementById('homeFeaturedGrid');
+            const fullGrid = document.getElementById('fullServicesGrid');
+
+            let htmlContent = "";
+            SERVICES_CATALOG.forEach(s => {
+                htmlContent += `
+                    <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200/80 flex flex-col justify-between hover:shadow-md transition">
+                        <div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-navy flex items-center justify-center text-2xl mb-4">
+                                <i class="fa-solid ${s.icon}"></i>
+                            </div>
+                            <h4 class="font-bold text-gray-900 text-base mb-1">${s.name}</h4>
+                            <p class="text-xs text-gray-500 leading-relaxed mb-4">${s.desc}</p>
+                        </div>
+                        <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                            <span class="text-xs font-extrabold text-emerald-600">शुल्क: ₹${s.fee}</span>
+                            <button onclick="initiateOrderForm('${s.name}', ${s.fee})" class="bg-brand-navy hover:bg-brand-darkNavy text-white text-xs font-bold px-3.5 py-2 rounded-lg transition">
+                                आवेदन करें
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (homeGrid) homeGrid.innerHTML = htmlContent;
+            if (fullGrid) fullGrid.innerHTML = htmlContent;
+        }
+
+        function filterServices() {
+            const query = document.getElementById('serviceSearchInput').value.toLowerCase();
+            const fullGrid = document.getElementById('fullServicesGrid');
+            
+            const filtered = SERVICES_CATALOG.filter(s => s.name.toLowerCase().includes(query) || s.desc.toLowerCase().includes(query));
+            
+            let htmlContent = "";
+            if (filtered.length === 0) {
+                htmlContent = `<div class="col-span-full text-center py-12 text-gray-400 text-sm">कोई सेवा नहीं मिली।</div>`;
+            } else {
+                filtered.forEach(s => {
+                    htmlContent += `
+                        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 flex flex-col justify-between">
+                            <div>
+                                <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-navy flex items-center justify-center text-2xl mb-4">
+                                    <i class="fa-solid ${s.icon}"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-900 text-base mb-1">${s.name}</h4>
+                                <p class="text-xs text-gray-500 leading-relaxed mb-4">${s.desc}</p>
+                            </div>
+                            <div class="pt-3 border-t border-gray-100 flex items-center justify-between">
+                                <span class="text-xs font-extrabold text-emerald-600">शुल्क: ₹${s.fee}</span>
+                                <button onclick="initiateOrderForm('${s.name}', ${s.fee})" class="bg-brand-navy hover:bg-brand-darkNavy text-white text-xs font-bold px-3.5 py-2 rounded-lg transition">
+                                    आवेदन करें
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            fullGrid.innerHTML = htmlContent;
+        }
+
+        /* ================= 4. ORDER SUBMISSION & RECEIPT ================= */
+        let lastSubmittedOrder = null;
+
+        function initiateOrderForm(serviceName, fee) {
+            document.getElementById('orderServiceSelect').value = serviceName;
+            document.getElementById('orderFeeDisplay').value = fee;
+            document.getElementById('receiptCard').classList.add('hidden');
+            navigateTo('order');
+        }
+
+        function handleOrderSubmission(e) {
+            e.preventDefault();
+            const service = document.getElementById('orderServiceSelect').value;
+            const fee = document.getElementById('orderFeeDisplay').value;
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const details = document.getElementById('custDetails').value.trim();
+
+            if (!service) {
+                showToast("कृपया पहले सेवा चुनें!", false);
+                return;
+            }
+
+            const newOrderId = "ORD" + Math.floor(1000 + Math.random() * 9000);
+            const newOrder = {
+                id: newOrderId,
+                service: service,
+                fee: parseInt(fee) || 50,
+                name: name,
+                phone: phone,
+                details: details,
+                status: 'Pending',
+                date: new Date().toLocaleDateString('hi-IN')
+            };
+
+            // Save to mock database
+            const orders = JSON.parse(localStorage.getItem('csc_orders') || '[]');
+            orders.unshift(newOrder);
+            localStorage.setItem('csc_orders', JSON.stringify(orders));
+
+            lastSubmittedOrder = newOrder;
+
+            // Render receipt UI
+            document.getElementById('receiptId').innerText = "ID: " + newOrderId;
+            document.getElementById('receiptName').innerText = name;
+            document.getElementById('receiptPhone').innerText = phone;
+            document.getElementById('receiptService').innerText = service;
+            document.getElementById('receiptFee').innerText = "₹" + fee;
+            document.getElementById('receiptCard').classList.remove('hidden');
+
+            showToast("ऑर्डर सबमिट हो गया है! ID: " + newOrderId, true);
+            document.getElementById('orderSubmitForm').reset();
+            document.getElementById('orderServiceSelect').value = service;
+            document.getElementById('orderFeeDisplay').value = fee;
+        }
+
+        function triggerWhatsAppRedirect() {
+            if (!lastSubmittedOrder) return;
+            const text = `नया ऑर्डर (${lastSubmittedOrder.id}):%0Aसेवा: ${encodeURIComponent(lastSubmittedOrder.service)}%0Aनाम: ${encodeURIComponent(lastSubmittedOrder.name)}%0Aमोबाइल: ${lastSubmittedOrder.phone}`;
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=917355719608&text=${text}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        /* ================= 5. LIVE TRACKER ================= */
+        function searchOrderStatus() {
+            const query = document.getElementById('trackerInput').value.trim().toLowerCase();
+            const container = document.getElementById('trackerResults');
+            const list = document.getElementById('trackerList');
+
+            if (!query) {
+                showToast("कृपया मोबाइल नंबर या ऑर्डर आईडी दर्ज करें", false);
+                return;
+            }
+
+            const orders = JSON.parse(localStorage.getItem('csc_orders') || '[]');
+            const matches = orders.filter(o => o.id.toLowerCase().includes(query) || o.phone.includes(query));
+
+            container.classList.remove('hidden');
+            
+            if (matches.length === 0) {
+                list.innerHTML = `<div class="p-4 text-center text-rose-500 text-xs font-semibold bg-rose-50 rounded-xl">कोई रिकॉर्ड नहीं मिला।</div>`;
+                return;
+            }
+
+            let html = "";
+            matches.forEach(o => {
+                let badgeClass = "bg-amber-100 text-amber-800";
+                if (o.status === 'Completed') badgeClass = "bg-emerald-100 text-emerald-800";
+                if (o.status === 'Processing') badgeClass = "bg-blue-100 text-blue-800";
+                if (o.status === 'Rejected') badgeClass = "bg-rose-100 text-rose-800";
+
+                html += `
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-200 flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-gray-900 text-sm">${o.service}</span>
+                                <span class="font-mono text-xs text-gray-500">(${o.id})</span>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">ग्राहक: ${o.name} | दिनांक: ${o.date}</div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeClass}">${o.status}</span>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        /* ================= 6. PORTAL AUTHENTICATION & DASHBOARD ================= */
+        let activeAuthRole = 'retailer';
+        let isRegisteringMode = false;
+
+        function setAuthRole(role) {
+            activeAuthRole = role;
+            const btnR = document.getElementById('roleBtnRetailer');
+            const btnA = document.getElementById('roleBtnAdmin');
+            
+            if (role === 'retailer') {
+                btnR.className = "flex-1 py-2.5 rounded-lg text-white bg-brand-navy shadow transition";
+                btnA.className = "flex-1 py-2.5 rounded-lg text-gray-600 hover:text-gray-900 transition";
+                document.getElementById('authPhoneLabel').innerText = "मोबाइल नंबर";
+                document.getElementById('authPhone').placeholder = "10-अंकीय मोबाइल नंबर";
+            } else {
+                btnA.className = "flex-1 py-2.5 rounded-lg text-white bg-brand-navy shadow transition";
+                btnR.className = "flex-1 py-2.5 rounded-lg text-gray-600 hover:text-gray-900 transition";
+                document.getElementById('authPhoneLabel').innerText = "एडमिन ID / यूजरनाम";
+                document.getElementById('authPhone').placeholder = "admin दर्ज करें";
+            }
+        }
+
+        function toggleAuthRegisterMode() {
+            isRegisteringMode = !isRegisteringMode;
+            document.getElementById('registerNameGroup').classList.toggle('hidden', !isRegisteringMode);
+            document.getElementById('authFormTitle').innerText = isRegisteringMode ? "नया रिटेलर रजिस्ट्रेशन" : "CSC पोर्टल लॉगिन";
+            document.getElementById('authSubmitBtn').innerText = isRegisteringMode ? "खाता रजिस्टर करें" : "लॉगिन करें";
+            document.getElementById('authToggleText').innerText = isRegisteringMode ? "पहले से खाता है? लॉगिन करें" : "नया रिटेलर खाता बनाएं?";
+        }
+
+        function handlePortalAuth(e) {
+            e.preventDefault();
+            const phone = document.getElementById('authPhone').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            const name = document.getElementById('authName').value.trim();
+
+            const users = JSON.parse(localStorage.getItem('csc_users') || '[]');
+
+            if (isRegisteringMode) {
+                // Register flow
+                users.push({ name: name || 'नया रिटेलर', phone: phone, password: password, role: 'retailer', wallet: 200 });
+                localStorage.setItem('csc_users', JSON.stringify(users));
+                showToast("रजिस्ट्रेशन सफल! अब लॉगिन करें।", true);
+                toggleAuthRegisterMode();
+            } else {
+                // Login flow
+                const matchedUser = users.find(u => u.phone === phone && u.password === password && u.role === activeAuthRole);
+                if (matchedUser) {
+                    sessionStorage.setItem('csc_session', JSON.stringify(matchedUser));
+                    showToast("लॉगिन सफल!", true);
+                    checkAuthSession();
+                } else {
+                    showToast("गलत यूजर आईडी या पासवर्ड!", false);
+                }
+            }
+        }
+
+        function checkAuthSession() {
+            const sessionData = sessionStorage.getItem('csc_session');
+            const authContainer = document.getElementById('portalAuthContainer');
+            const dashContainer = document.getElementById('portalDashboard');
+            const navAuthLabel = document.getElementById('navAuthLabel');
+
+            if (sessionData) {
+                const user = JSON.parse(sessionData);
+                authContainer.classList.add('hidden');
+                dashContainer.classList.remove('hidden');
+                navAuthLabel.innerText = user.name;
+
+                // Set dashboard info
+                document.getElementById('dashUserName').innerText = user.name;
+                document.getElementById('dashUserBadge').innerText = user.role.toUpperCase();
+                document.getElementById('dashUserSubtext').innerText = "ID: " + user.phone;
+                document.getElementById('dashWalletBalance').innerText = "₹" + (user.wallet || 0);
+
+                // Admin specific elements
+                document.getElementById('adminRetailersSection').classList.toggle('hidden', user.role !== 'admin');
+
+                refreshDashboardData();
+            } else {
+                authContainer.classList.remove('hidden');
+                dashContainer.classList.add('hidden');
+                navAuthLabel.innerText = "लॉगिन पोर्टल";
+            }
+        }
+
+        function logoutPortal() {
+            sessionStorage.removeItem('csc_session');
+            showToast("लॉग आउट हुआ", true);
+            checkAuthSession();
+        }
+
+        function refreshDashboardData() {
+            const orders = JSON.parse(localStorage.getItem('csc_orders') || '[]');
+            const users = JSON.parse(localStorage.getItem('csc_users') || '[]');
+            const session = JSON.parse(sessionStorage.getItem('csc_session') || '{}');
+
+            // Filter if retailer
+            let displayOrders = orders;
+            if (session.role === 'retailer') {
+                displayOrders = orders.filter(o => o.phone === session.phone);
+            }
+
+            // Stats
+            document.getElementById('statTotalOrders').innerText = displayOrders.length;
+            document.getElementById('statPendingOrders').innerText = displayOrders.filter(o => o.status === 'Pending').length;
+            document.getElementById('statCompletedOrders').innerText = displayOrders.filter(o => o.status === 'Completed').length;
+            
+            const totalRev = displayOrders.reduce((sum, o) => sum + (o.fee || 0), 0);
+            document.getElementById('statRevenue').innerText = "₹" + totalRev;
+
+            // Table Render
+            const tbody = document.getElementById('dashOrdersTableBody');
+            if (displayOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">कोई ऑर्डर डेटा नहीं मिला।</td></tr>`;
+            } else {
+                let html = "";
+                displayOrders.forEach(o => {
+                    let statusColor = "bg-amber-100 text-amber-800";
+                    if (o.status === 'Completed') statusColor = "bg-emerald-100 text-emerald-800";
+                    if (o.status === 'Processing') statusColor = "bg-blue-100 text-blue-800";
+
+                    let actionBtns = session.role === 'admin' ? `
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-gray-50 border rounded text-[11px] p-1 font-bold">
+                            <option value="Pending" ${o.status==='Pending'?'selected':''}>Pending</option>
+                            <option value="Processing" ${o.status==='Processing'?'selected':''}>Processing</option>
+                            <option value="Completed" ${o.status==='Completed'?'selected':''}>Completed</option>
+                        </select>
+                    ` : `<span class="text-gray-400 text-[11px]">सुरक्षित</span>`;
+
+                    html += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-mono font-bold">${o.id}</td>
+                            <td class="p-3">
+                                <div class="font-bold text-gray-900">${o.name}</div>
+                                <div class="text-[10px] text-gray-500">${o.phone}</div>
+                            </td>
+                            <td class="p-3 font-semibold text-brand-navy">${o.service}</td>
+                            <td class="p-3 font-bold text-emerald-600">₹${o.fee}</td>
+                            <td class="p-3"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${statusColor}">${o.status}</span></td>
+                            <td class="p-3 text-right">${actionBtns}</td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html;
+            }
+
+            // Render Admin Retailers Directory
+            if (session.role === 'admin') {
+                const retTbody = document.getElementById('dashRetailersTableBody');
+                let retHtml = "";
+                users.forEach(u => {
+                    retHtml += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-bold text-gray-900">${u.name}</td>
+                            <td class="p-3 font-mono">${u.phone}</td>
+                            <td class="p-3"><span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-bold uppercase">${u.role}</span></td>
+                            <td class="p-3 font-bold text-emerald-600">₹${u.wallet || 0}</td>
+                        </tr>
+                    `;
+                });
+                retTbody.innerHTML = retHtml;
+            }
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            const orders = JSON.parse(localStorage.getItem('csc_orders') || '[]');
+            const idx = orders.findIndex(o => o.id === orderId);
+            if (idx !== -1) {
+                orders[idx].status = newStatus;
+                localStorage.setItem('csc_orders', JSON.stringify(orders));
+                showToast(`ऑर्डर ${orderId} का स्टेटस अपडेट हुआ: ${newStatus}`, true);
+                refreshDashboardData();
+            }
+        }
+
+        function mockTopUpWallet() {
+            const session = JSON.parse(sessionStorage.getItem('csc_session') || '{}');
+            if (!session.phone) return;
+
+            session.wallet = (session.wallet || 0) + 500;
+            sessionStorage.setItem('csc_session', JSON.stringify(session));
+
+            // Sync database
+            const users = JSON.parse(localStorage.getItem('csc_users') || '[]');
+            const idx = users.findIndex(u => u.phone === session.phone);
+            if (idx !== -1) {
+                users[idx].wallet = session.wallet;
+                localStorage.setItem('csc_users', JSON.stringify(users));
+            }
+
+            showToast("₹500 वॉलेट में सफलतापूर्वक जोड़े गए!", true);
+            checkAuthSession();
+        }
+
+        /* ================= 7. APP INIT ================= */
+        window.onload = function() {
+            initMockDatabase();
+            renderServices();
+            // Default to Home View
+            navigateTo('home');
+        };
+    </script>
+</body>
+</html>
+```
